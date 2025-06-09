@@ -49,7 +49,7 @@ async function getAirbnbListingDetails(params) {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: false,
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -118,12 +118,25 @@ async function getAirbnbListingDetails(params) {
                         imageSrcs.push(img.src);
                     }
                 });
+
+                // Novo: Capturar o preço
+                let price = null;
+                const buttons = el.querySelectorAll('button[type="button"]');
+                buttons.forEach(button => {
+                    const priceSpan = Array.from(button.querySelectorAll('span')).find(span => span.textContent.trim().startsWith('R$'));
+                    if (priceSpan) {
+                        // Remove "R$" e pontuação, deixando apenas os números
+                        price = priceSpan.textContent.trim().replace(/[^0-9]/g, '');
+                    }
+                });
+
                 if (name || roomId) {
                     data.push({
                         name: name,
                         roomId: roomId,
                         url: fullUrl,
-                        imageSrcs: imageSrcs
+                        imageSrcs: imageSrcs,
+                        price: price // Adiciona o preço formatado ao objeto
                     });
                 }
             });
