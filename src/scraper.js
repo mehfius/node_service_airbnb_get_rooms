@@ -44,8 +44,11 @@ function buildAirbnbUrl(params) {
 }
 
 async function getAirbnbListingDetails(params) {
+    // Registra o tempo de início do processamento
+    const startTime = new Date();
+    console.log(`Início do processamento: ${startTime.toISOString()}`);
+
     const airbnbUrl = buildAirbnbUrl(params);
-    console.log('URL de Scraping Gerada:', airbnbUrl);
     let browser;
     try {
         browser = await puppeteer.launch({
@@ -63,7 +66,6 @@ async function getAirbnbListingDetails(params) {
         const page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         await page.setViewport({ width: 1440, height: 900 });
-        console.log('Navegando para a URL:', airbnbUrl);
         await page.goto(airbnbUrl, { waitUntil: 'domcontentloaded', timeout: 90000 });
         const itemSelector = 'div[itemprop="itemListElement"]';
         const expectedMinCount = 18;
@@ -73,20 +75,10 @@ async function getAirbnbListingDetails(params) {
                 (selector, expectedCount) => {
                     return document.querySelectorAll(selector).length >= expectedCount;
                 },
-                { timeout: 60000, polling: 'raf' },
+                { timeout: 60000, polling: 'mutation' },
                 itemSelector,
                 expectedMinCount
             );
-            console.log(`Pelo menos ${expectedMinCount} elementos encontrados ou tempo limite alcançado.`);
-            console.log('Simulando rolagem para garantir que todos os elementos sejam carregados...');
-            for (let i = 0; i < 3; i++) {
-                await page.evaluate(() => {
-                    window.scrollBy(0, window.innerHeight * 0.8);
-                });
-                await page.waitForTimeout(1500);
-            }
-            console.log('Pausa final de 2 segundos antes da extração...');
-            await page.waitForTimeout(2000);
         } catch (waitError) {
             console.warn(`Aviso: Erro ao esperar pelos elementos: ${waitError.message}. Tentando extrair o que foi carregado.`);
         }
@@ -119,7 +111,7 @@ async function getAirbnbListingDetails(params) {
                     }
                 });
 
-                // Novo: Capturar o preço
+                // Captura o preço
                 let price = null;
                 const buttons = el.querySelectorAll('button[type="button"]');
                 buttons.forEach(button => {
@@ -143,7 +135,11 @@ async function getAirbnbListingDetails(params) {
             return data;
         }, itemSelector);
         console.log(`Total de listings encontrados: ${listings.length}`);
-        console.log('Detalhes dos listings:', listings);
+        // Log para imprimir apenas o roomId e o price para cada listing
+        console.log('Detalhes dos listings (roomId, preço):');
+        listings.forEach(listing => {
+            console.log(`  Room ID: ${listing.roomId}, Preço: R$ ${listing.price}`);
+        });
         return listings;
     } catch (error) {
         console.error('Ocorreu um erro geral durante o scraping:', error);
@@ -153,6 +149,11 @@ async function getAirbnbListingDetails(params) {
             await browser.close();
             console.log('Navegador fechado.');
         }
+        // Registra o tempo de fim do processamento e calcula a duração
+        const endTime = new Date();
+        const processingTime = endTime.getTime() - startTime.getTime();
+        console.log(`Fim do processamento: ${endTime.toISOString()}`);
+        console.log(`Tempo total de processamento: ${processingTime} ms`);
     }
 }
 
