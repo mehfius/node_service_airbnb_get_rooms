@@ -13,16 +13,16 @@ function buildAirbnbUrl(params) {
     params.refinement_paths.forEach(p => queryParams.append('refinement_paths[]', p));
     params.room_types.forEach(rt => queryParams.append('room_types[]', rt));
     params.amenities.forEach(a => queryParams.append('amenities[]', a));
-    params.flexible_trip_lengths.forEach(ftl => queryParams.append('flexible_trip_lengths[]', ftl));
+/*     params.flexible_trip_lengths.forEach(ftl => queryParams.append('flexible_trip_lengths[]', ftl)); */
     queryParams.append('acp_id', params.acp_id);
     queryParams.append('date_picker_type', params.date_picker_type);
     queryParams.append('place_id', params.place_id);
     queryParams.append('source', params.source);
     queryParams.append('search_type', params.search_type);
     queryParams.append('parent_city_place_id', params.parent_city_place_id);
-    queryParams.append('monthly_start_date', params.monthly_start_date);
+/*     queryParams.append('monthly_start_date', params.monthly_start_date);
     queryParams.append('monthly_length', params.monthly_length);
-    queryParams.append('monthly_end_date', params.monthly_end_date);
+    queryParams.append('monthly_end_date', params.monthly_end_date); */
     queryParams.append('search_mode', params.search_mode);
     queryParams.append('price_filter_input_type', params.price_filter_input_type);
     queryParams.append('price_filter_num_nights', params.price_filter_num_nights);
@@ -30,7 +30,7 @@ function buildAirbnbUrl(params) {
     queryParams.append('update_selected_filters', params.update_selected_filters);
     queryParams.append('pagination_search', params.pagination_search);
     queryParams.append('federated_search_session_id', params.federated_search_session_id);
-    queryParams.append('cursor', params.cursor);
+/*     queryParams.append('cursor', params.cursor); */
     if (params.room_types.includes('Entire home/apt')) {
         queryParams.append('selected_filter_order[]', 'room_types:Entire home/apt');
     }
@@ -52,7 +52,7 @@ async function getAirbnbListingDetails(params) {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -145,7 +145,7 @@ async function getAirbnbListingDetails(params) {
         console.error('Ocorreu um erro geral durante o scraping:', error);
         return null;
     } finally {
-        if (browser) {
+        if (browser) {      
             await browser.close();
             console.log('Navegador fechado.');
         }

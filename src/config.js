@@ -21,11 +21,11 @@ const searchParams = {
     place_id: 'ChIJpRZY0PGVNgcRnC9ELEIDn6o',
     parent_city_place_id: 'ChIJUVkU-rNsBwcR8bVlDBlDvZ0',
     federated_search_session_id: '066ec9d1-edaa-4792-98ec-ea9b0c3ece0a',
-    cursor: 'eyJzZWN0aW9uX29mZnNldCI6MCwiaXRlbXNfb2Zmc2V0IjowLCJ2ZXJzaW9uIjoxfQ%3D%3D',
-    flexible_trip_lengths: ['one_week'],
+/*     cursor: 'eyJzZWN0aW9uX29mZnNldCI6MCwiaXRlbXNfb2Zmc2V0IjowLCJ2ZXJzaW9uIjoxfQ%3D%3D', */
+/*     flexible_trip_lengths: ['one_week'],
     monthly_start_date: '2025-07-01',
     monthly_length: 3,
-    monthly_end_date: '2025-10-01',
+    monthly_end_date: '2025-10-01', */
     update_selected_filters: 'true',
     pagination_search: 'true',
 };
